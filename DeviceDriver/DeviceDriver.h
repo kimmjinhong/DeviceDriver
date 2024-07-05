@@ -7,8 +7,6 @@ using namespace std;
 class DeviceDriver
 {
 public:
-    static const int READ_FAIL_ADDRESS = 0x100;
-    static const int WRITE_FAIL_ADDRESS = 0x200;
     DeviceDriver(FlashMemoryDevice* hardware);
     int read(long address);
     void write(long address, int data);
@@ -23,6 +21,17 @@ private:
 
 public:
     ReadFailException(string msg) : message(msg) {}
+    string what() {
+        return message;
+    }
+};
+
+class WriteFailException : public std::exception {
+private:
+    string message;
+
+public:
+    WriteFailException(string msg) : message(msg) {}
     string what() {
         return message;
     }

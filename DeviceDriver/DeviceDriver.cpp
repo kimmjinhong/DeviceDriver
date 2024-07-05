@@ -13,7 +13,6 @@ int DeviceDriver::read(long address)
     // TODO: implement this method properl
     int result;
     result = (int)(m_hardware->read(address));
-    std::cout << "read : " << result << std::endl;
     for(int i = 0; i < 4; i++) {
         if (result != (int)(m_hardware->read(address))) {
             throw ReadFailException("Read Fail");
@@ -25,5 +24,10 @@ int DeviceDriver::read(long address)
 void DeviceDriver::write(long address, int data)
 {
     // TODO: implement this method
+    int result;
+    result = (int)(m_hardware->read(address));
+    if (result != 0xff) {
+        throw WriteFailException("Write Fail");
+    }
     m_hardware->write(address, (unsigned char)data);
 }
