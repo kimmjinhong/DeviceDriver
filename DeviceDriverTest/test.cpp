@@ -3,6 +3,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "../DeviceDriver/DeviceDriver.cpp"
+#include "../DeviceDriver/Application.cpp"
 #include "../DeviceDriver/FlashMemoryDevice.h"
 
 using namespace std;
@@ -28,7 +29,7 @@ TEST_F(HardwareFixture, BasicReadCallTest) {
 	EXPECT_CALL(mock_hw, read).Times(5);
 
 	DeviceDriver driver(&mock_hw);
-	driver.read(0x00);
+	driver.read(0x01);
 }
 
 TEST_F(HardwareFixture, ReadExceptionTest) {
@@ -67,5 +68,29 @@ TEST_F(HardwareFixture, WriteExceptionTest) {
 	EXPECT_THROW({
 			driver.write(WRITE_FAIL_ADDRESS, 'a');
 		}, WriteFailException);
+}
 
+TEST_F(HardwareFixture, BasicApplicationReadAndPrintTest) {
+	DeviceDriver driver(&mock_hw);
+	Application app(&driver);
+	int startAddr = 0x10;
+	int endAddr = 0x20;
+	for (int i = startAddr; i <= endAddr; i++) {
+		EXPECT_CALL(mock_hw, read(i))
+			.Times(5)
+			.WillRepeatedly(Return(i));
+	}
+	app.ReadAndPrint(startAddr, endAddr);
+}
+
+TEST_F(HardwareFixture, ApplicationWriteAll) {
+	DeviceDriver driver(&mock_hw);
+	Application app(&driver);
+
+	int startAddr = 0x00;
+	int endAddr = 0x04;
+	EXPECT_CALL(mock_hw, read(_))
+		.Times(5)
+		.WillRepeatedly(Return(0xff));
+	app.WriteAll('a');
 }
