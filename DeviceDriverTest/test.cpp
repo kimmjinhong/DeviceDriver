@@ -17,20 +17,26 @@ public:
 class HardwareFixture : public testing::Test {
 protected:
 	void SetUp() override {
-		EXPECT_CALL(mock_hw, read, (), ())
-			.Times(5);
 	}
 public:
-	MockHardware mock_hw;
+	NiceMock<MockHardware> mock_hw;
 };
 
-TEST_F(HardwareFixture, BasicCallTest) {
+TEST_F(HardwareFixture, BasicReadCallTest) {
+	EXPECT_CALL(mock_hw, read).Times(5);
 
 	DeviceDriver driver(&mock_hw);
 	driver.read(0x00);
 }
 
 TEST_F(HardwareFixture, ReadExceptionTest) {
+	EXPECT_CALL(mock_hw, read(DeviceDriver::READ_FAIL_ADDRESS))
+		.WillOnce(Return(0x03))
+		.WillOnce(Return(0x03))
+		.WillOnce(Return(0x03))
+		.WillOnce(Return(0x03))
+		.WillOnce(Return(0x04));
+
 	try {
 		DeviceDriver driver(&mock_hw);
 		int result = driver.read(DeviceDriver::READ_FAIL_ADDRESS);
@@ -38,7 +44,6 @@ TEST_F(HardwareFixture, ReadExceptionTest) {
 	}
 	catch(ReadFailException& e){
 		//assert
-		std::cout << e.what() << std::endl;
 		EXPECT_EQ(string{ e.what() }, string{ "Read Fail" });
 	}
 }

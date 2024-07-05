@@ -8,6 +8,7 @@ class DeviceDriver
 {
 public:
     static const int READ_FAIL_ADDRESS = 0x100;
+    static const int WRITE_FAIL_ADDRESS = 0x200;
     DeviceDriver(FlashMemoryDevice* hardware);
     int read(long address);
     void write(long address, int data);
