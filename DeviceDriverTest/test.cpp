@@ -33,10 +33,10 @@ TEST_F(HardwareFixture, BasicCallTest) {
 TEST_F(HardwareFixture, ReadExceptionTest) {
 	try {
 		DeviceDriver driver(&mock_hw);
-		int result = driver.read(0x100);
+		int result = driver.read(DeviceDriver::READ_FAIL_ADDRESS);
 		FAIL();
 	}
-	catch(std::runtime_error& e){
+	catch(ReadFailException& e){
 		//assert
 		std::cout << e.what() << std::endl;
 		EXPECT_EQ(string{ e.what() }, string{ "Read Fail" });

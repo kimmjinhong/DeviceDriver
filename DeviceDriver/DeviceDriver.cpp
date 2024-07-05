@@ -13,8 +13,8 @@ int DeviceDriver::read(long address)
     result = (int)(m_hardware->read(address));
     result = (int)(m_hardware->read(address));
     result = (int)(m_hardware->read(address));
-    if (address == 0x100) {
-        throw std::runtime_error("Read Fail");
+    if (address == READ_FAIL_ADDRESS) {
+        throw ReadFailException("Read Fail");
     }
     return result;
 }
